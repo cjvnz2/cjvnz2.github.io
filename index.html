@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1" />
+  <title>Rockstar ArcGIS JS Concept</title>
+
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css" />
+  <link rel="stylesheet" href="./style.css" />
+
+  <script>
+    const locationPath = location.pathname.replace(/\/[^\/]+$/, "");
+    dojoConfig = {
+      packages: [{
+        name: "utils",
+        location: locationPath + "/utils"
+      }],
+      async: true
+    };
+  </script>
+
+  <script src="https://js.arcgis.com/4.28/"></script>
+  <script>
+    require([
+      "esri/config",
+      "esri/Map",
+
+      "esri/views/SceneView",
+      "esri/layers/TileLayer",
+      "esri/layers/VectorTileLayer",
+      "esri/layers/FeatureLayer",
+
+      "esri/layers/GeoJSONLayer",
+      "esri/Basemap",
+
+      // "utils/ExaggeratedElevationLayer",
+
+      "esri/Graphic",
+      "esri/geometry/Point",
+      "esri/geometry/Mesh",
+
+      "esri/layers/support/LabelClass",
+      "esri/renderers/SimpleRenderer",
+      "esri/symbols/PointSymbol3D",
+      "esri/symbols/IconSymbol3DLayer",
+
+      
+      "esri/portal/Portal",
+      "esri/identity/OAuthInfo",
+      "esri/identity/IdentityManager",
+      "esri/portal/PortalQueryParams"
+
+      // "esri/core/watchUtils"
+    ], function (
+      Config, 
+      Map, 
+      SceneView, 
+      TileLayer, 
+      VectorTileLayer, 
+      FeatureLayer, 
+      GeoJSONLayer, 
+      Basemap, 
+      // ExaggeratedElevationLayer, 
+      Graphic, 
+      Point, 
+      Mesh, 
+      LabelClass, 
+      SimpleRenderer, 
+      PointSymbol3D, 
+      IconSymbol3DLayer,
+      Portal,
+      OAuthInfo,
+      esriId,
+      PortalQueryParams
+      ) {
+
+
+      const R = 6358137; // approximate radius of the Earth in m
+      const offset = 300000; // offset from the ground used for the clouds
+
+      const basemap = new Basemap({
+        baseLayers: [
+          // new TileLayer({
+          //   // url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/terrain_with_heavy_bathymetry/MapServer",
+          //   url: "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer",
+          //   copyright: "Bathymetry, topography and satellite imagery from <a href=\"https://visibleearth.nasa.gov/view_cat.php?categoryID=1484\" target=\"_blank\">NASA Visible Earth</a> | <a href=\"http://www.aag.org/global_ecosystems\" target=\"_blank\">World Ecological Land Units, AAG</a> | Oceans, glaciers and water bodies from <a href=\"https://www.naturalearthdata.com/\" target=\"_blank\">Natural Earth</a>"
+          // })
+          new VectorTileLayer({
+            // esri colored pencil style
+            url:
+            "https://www.arcgis.com/sharing/rest/content/items/681eff50241441a983fd7873cd30350d/resources/styles/root.json"
+            // "https://www.arcgis.com/sharing/rest/content/items/29d1a9c2894d404685a4d42ed053497c/resources/styles/root.json"
+            // "https://www.arcgis.com/sharing/rest/content/items/bc54dac1d8b543808fdb97bfb0cf8539/resources/styles/root.json"
+          })
+        ]
+      });
+
+      const map = new Map({
+        basemap: basemap
+      });
+
+      const view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        alphaCompositingEnabled: true,
+        qualityProfile: "high",
+        camera: {
+          // position: [-55.03975781, 14.94826384, 19921223.30821],
+          position: [174.763336, -36.848461, 19921223.30821],
+          heading: 2.03,
+          tilt: 0.13
+        },
+        environment: {
+          background: {
+            type: "color",
+            color: [255, 252, 244, 0]
+          },
+          starsEnabled: false,
+          atmosphereEnabled: false,
+          // SunLighting: {
+          //   directShadowsEnabled: false,
+          //   date: "Sun Jan 23 2019 02:19:18 GMT+0200 (Central European Summer Time)"
+          // }
+          lighting: {
+            type: "virtual",
+            directShadowsEnabled: false
+          }
+        },
+        constraints: {
+          altitude: {
+            min: 10,
+            max: 25000000
+          }
+        },
+        popup: {
+          dockEnabled: true,
+          dockOptions: {
+            position: "top-right",
+            breakpoint: false,
+            buttonEnabled: false
+          },
+          collapseEnabled: false
+        },
+        highlightOptions: {
+          color: [255, 255, 255],
+          haloOpacity: 0.5
+        }
+      });
+
+      view.ui.remove("navigation-toggle");
+
+      // map.ground.layers = [new ExaggeratedElevationLayer({
+      //   exaggerationBathymetry: 0,
+      //   exaggerationTopography: 2
+      // })];
+
+      const origin = new Point({
+        x: 0, y: -90, z: -(2 * R)
+      });
+
+
+
+      const renderer = new SimpleRenderer({
+          symbol: new PointSymbol3D({
+            symbolLayers: [
+              new IconSymbol3DLayer({
+                resource: {
+                  href: "./Pushpin.svg"
+                },
+                size: 16,
+                material: {
+                  color: "#ff4337",
+                },
+                anchor: "bottom",
+              }),
+            ],
+          }),
+        });
+
+      const rendererGrey = new SimpleRenderer({
+        symbol: new PointSymbol3D({
+          symbolLayers: [
+            new IconSymbol3DLayer({
+              resource: {
+                href: "https://static.arcgis.com/arcgis/styleItems/Icons/web/resource/Pushpin3.svg"
+              },
+              size: 16,
+              material: {
+                color: "#d3d3d3",
+              },
+              anchor: "bottom",
+            }),
+          ],
+        }),
+      });
+
+      const populationLayer = new FeatureLayer({
+        url:
+          "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/World_Cities_analysis/FeatureServer",
+        definitionExpression: "POP > 6000000",
+        renderer: rendererGrey,
+        screenSizePerspectiveEnabled: false,
+        labelingInfo: [
+          new LabelClass({
+            labelExpressionInfo: { expression: "$feature.CITY_NAME" },
+            symbol: {
+              type: "label-3d",
+              symbolLayers: [
+                {
+                  type: "text", // autocasts as new TextSymbol3DLayer()
+                  material: { color: "#d3d3d3" },
+                  size: 10,
+                  halo: {
+                    color: "white",
+                    size: 1,
+                  },
+                },
+              ],
+            },
+          }),
+        ],
+      })
+
+      map.layers.add(populationLayer)
+
+
+      
+      //  //Create a new OAuthInfo object.
+      //  const info = new OAuthInfo({
+      //     // Swap this ID out with an app ID registered in your ArcGIS Organization.
+      //     appId: "2121e62c2c99458d95bcd299677f27ec",
+      //     // Add the portalUrl property if using your own portal.
+      //     portalUrl: "https://nz-maps.wsp.com/portal"
+      //     // Set the authNamespace property to prevent the user's signed in state
+      //     // from being shared with other apps on the same domain with the same authNamespace value.
+      //     // authNamespace: "portal_oauth_inline",
+      //     // Set popup to true to show the OAuth sign-in page in a separate popup window.
+      //     //popup: true
+      //   });
+
+      //   // Add the OAuthInfo to the IdentityManager.
+      //   esriId.registerOAuthInfos([info]);
+
+        
+
+      //   const rockstarFeature = new FeatureLayer({
+      //   url: "https://nz-maps.wsp.com/server/rest/services/Hosted/RockstarCapabilityProject/FeatureServer/0",
+      //   elevationInfo: {
+      //     mode: "relative-to-ground",
+      //     offset: 1,
+      //   },
+      //   copyright: "Data from <a href=\"https://nz-maps.wsp.com/portal/home/item.html?id=a97ccc3fd99847e7999f4d887b3be1c8\" target=\"_blank\">NZ Maps Rockstar</a> GIS Data | <a href=\"https://visibleearth.nasa.gov/view.php?id=57747\" target=\"_blank\">Cloud image</a> from NASA Goddard Space Flight Center (image by Reto Stöckli) for the cloud layer",
+      //   renderer: renderer,
+      //   popupTemplate: {
+      //     title: "{project}",
+      //     content: `
+      //       <div class="popupImage">
+      //         <img src="https://i.ibb.co/3Yffpvn/Header-Image.png" alt="Rockstar Header"/>
+      //       </div>
+      //       <div class="popupDescription">
+      //         <p class="info">
+      //           <span class="esri-icon-favorites"></span> {project}
+      //         </p>
+      //         <p class="info">
+      //           <span class="esri-icon-map-pin"></span> New Zealand
+      //         </p>
+      //         <p class="info">
+      //           <span class="esri-icon-documentation"></span> {client}
+      //         </p>
+      //       </div>
+      //     `
+      //   }
+      // });
+
+      // map.layers.add(rockstarFeature)
+
+
+
+      // const rockstarLayer = new GeoJSONLayer({
+      //   // url: "extreme-points.geojson",
+      //   url: "project-locations.geojson",
+      //   elevationInfo: {
+      //     mode: "relative-to-ground",
+      //     offset: 1
+      //   },
+      //   copyright: "Data from <a href=\"https://nz-maps.wsp.com/portal/home/item.html?id=a97ccc3fd99847e7999f4d887b3be1c8\" target=\"_blank\">NZ Maps Rockstar</a> GIS Data | <a href=\"https://visibleearth.nasa.gov/view.php?id=57747\" target=\"_blank\">Cloud image</a> from NASA Goddard Space Flight Center (image by Reto Stöckli) for the cloud layer",
+      //   renderer: renderer,
+      //   popupTemplate: {
+      //     title: "{project}",
+      //     content: `
+      //       <div class="popupImage">
+      //         <img src="https://i.ibb.co/3Yffpvn/Header-Image.png" alt="Rockstar Header"/>
+      //       </div>
+      //       <div class="popupDescription">
+      //         <p class="info">
+      //           <span class="esri-icon-favorites"></span> {project}
+      //         </p>
+      //         <p class="info">
+      //           <span class="esri-icon-map-pin"></span> New Zealand
+      //         </p>
+      //         <p class="info">
+      //           <span class="esri-icon-documentation"></span> {client}
+      //         </p>
+      //       </div>
+      //     `
+      //   }
+      // });
+      // map.layers.add(rockstarLayer);
+
+
+
+      document.getElementById("close-about").addEventListener("click", closeMenu);
+
+      document.getElementById("start-globe").addEventListener("click", function () {
+        closeMenu();
+        // view.when(function () {
+        //   watchUtils.whenFalseOnce(view, "updating", rotate);
+        // });
+      });
+
+      document.getElementById("container").addEventListener("click", function (e) {
+        if (e.target.id === "container") {
+          closeMenu();
+          // view.when(function () {
+          //   watchUtils.whenFalseOnce(view, "updating", rotate);
+          // });
+        }
+      });
+
+      function closeMenu() {
+        document.getElementById("container").style.display = "none";
+        view.container.style.filter = "blur(0px)";
+      }
+
+      let intro = true;
+      document.getElementById("about").addEventListener("click", function () {
+        document.getElementById("container").style.display = "flex";
+        view.container.style.filter = "blur(10px)";
+        if (intro) {
+          document.getElementById("show-about").classList.remove("hidden");
+          document.getElementById("show-intro").classList.add("hidden");
+          intro = false;
+        }
+      });
+
+      view.ui.add("about", "bottom-left");
+
+      function rotate() {
+        if (!view.interacting) {
+          const camera = view.camera.clone();
+          camera.position.longitude -= 0.2;
+          view.goTo(camera, { animate: false });
+          requestAnimationFrame(rotate);
+        }
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="about">About this globe</div>
+  </div>
+  <div id="container">
+    <div id="introDiv">
+      <h1>JS Concept</h1>
+      <div id="show-intro">
+        <p> The ArcGIS Maps SDK for JavaScript is a powerful library that enables developers to build compelling web applications with interactive user experiences and stunning 2D and 3D visualizations. 
+          It provides a wide range of features, including maps, scenes, layers, query, edit, visualization, geocoding, routing, places, demographics, spatial analysis, authentication, utility network, and knowledge graph. 
+          <br><br>
+          This concept uses the ArcGIS Maps SDK for JavaScript as a base for a potential Rockstar Capability Project viewer.
+          <br><br>
+          Based on <a href="https://www.esri.com/arcgis-blog/products/js-api-arcgis/3d-gis/interactive-3d-globe/" target="_blank">this tutorial</a>.
+        </p>
+        <button id="start-globe">Go to globe</button>
+      </div>
+      <div id="show-about" class="hidden">
+        <button id="close-about" class="esri-icon-close"></button>
+        <p>Info regarding original project: 
+          <br> <br>
+          3D Globe created by <a href="https://www.esri.com/arcgis-blog/author/j_nelson/" target="_blank">John</a> and
+          <a href="https://www.esri.com/arcgis-blog/author/raluca_zurich/" target="_blank">Raluca</a> after getting
+          inspired by the <a href="https://www.half-earthproject.org/maps/" target="_blank">Half-Earth Project globe</a>, and <a href="https://www.fonterra.com/nz/en/campaign/from-here-to-everywhere.html#/home"
+            target="_blank">this awesome globe</a> and <a href="https://www.instagram.com/p/Bt8zyI-gsqW/"
+            target="_blank">this other awesome globe</a>. We used <a
+            href="https://developers.arcgis.com/javascript/" target="_blank">ArcGIS API for JavaScript</a> to create the interactive globe and <a href="https://pro.arcgis.com/"
+            target="_blank">ArcGIS Pro</a> to create the basemap. Many thanks to Arno Fiva, Christian Iten and Jesse van den Kieboom for the awesome feedback.</p>
+        <p>Read this <a href="https://www.esri.com/arcgis-blog/products/js-api-arcgis/3d-gis/interactive-3d-globe/" target="_blank">blog post</a> to find out how the globe was created. For the curious coders, here is the <a href="https://github.com/RalucaNicola/the-globe-of-extremes" target="_blank">Github repository</a>.</p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
