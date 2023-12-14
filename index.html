@@ -279,36 +279,36 @@
 
 
 
-      // const rockstarLayer = new GeoJSONLayer({
-      //   // url: "extreme-points.geojson",
-      //   url: "project-locations.geojson",
-      //   elevationInfo: {
-      //     mode: "relative-to-ground",
-      //     offset: 1
-      //   },
-      //   copyright: "Data from <a href=\"https://nz-maps.wsp.com/portal/home/item.html?id=a97ccc3fd99847e7999f4d887b3be1c8\" target=\"_blank\">NZ Maps Rockstar</a> GIS Data | <a href=\"https://visibleearth.nasa.gov/view.php?id=57747\" target=\"_blank\">Cloud image</a> from NASA Goddard Space Flight Center (image by Reto Stöckli) for the cloud layer",
-      //   renderer: renderer,
-      //   popupTemplate: {
-      //     title: "{project}",
-      //     content: `
-      //       <div class="popupImage">
-      //         <img src="https://i.ibb.co/3Yffpvn/Header-Image.png" alt="Rockstar Header"/>
-      //       </div>
-      //       <div class="popupDescription">
-      //         <p class="info">
-      //           <span class="esri-icon-favorites"></span> {project}
-      //         </p>
-      //         <p class="info">
-      //           <span class="esri-icon-map-pin"></span> New Zealand
-      //         </p>
-      //         <p class="info">
-      //           <span class="esri-icon-documentation"></span> {client}
-      //         </p>
-      //       </div>
-      //     `
-      //   }
-      // });
-      // map.layers.add(rockstarLayer);
+      const rockstarLayer = new GeoJSONLayer({
+        // url: "extreme-points.geojson",
+        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/project-locations.geojson?_sm_au_=iHV6TFWPWQ37L4Br08C1pKs314jqc",
+        elevationInfo: {
+          mode: "relative-to-ground",
+          offset: 1
+        },
+        copyright: "Data from <a href=\"https://nz-maps.wsp.com/portal/home/item.html?id=a97ccc3fd99847e7999f4d887b3be1c8\" target=\"_blank\">NZ Maps Rockstar</a> GIS Data | <a href=\"https://visibleearth.nasa.gov/view.php?id=57747\" target=\"_blank\">Cloud image</a> from NASA Goddard Space Flight Center (image by Reto Stöckli) for the cloud layer",
+        renderer: renderer,
+        popupTemplate: {
+          title: "{project}",
+          content: `
+            <div class="popupImage">
+              <img src="https://i.ibb.co/3Yffpvn/Header-Image.png" alt="Rockstar Header"/>
+            </div>
+            <div class="popupDescription">
+              <p class="info">
+                <span class="esri-icon-favorites"></span> {project}
+              </p>
+              <p class="info">
+                <span class="esri-icon-map-pin"></span> New Zealand
+              </p>
+              <p class="info">
+                <span class="esri-icon-documentation"></span> {client}
+              </p>
+            </div>
+          `
+        }
+      });
+      map.layers.add(rockstarLayer);
 
 
 
