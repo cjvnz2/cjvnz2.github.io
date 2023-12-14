@@ -1,0 +1,63 @@
+{
+    "exceededTransferLimit": false,
+    "features": [
+        {
+            "id": 4,
+            "type": "Feature",
+            "properties": {
+                "objectid": 4,
+                "lastname": "lastname 1",
+                "firstname": "firstname 1",
+                "title": "title 1",
+                "location": "Auckland",
+                "specialisations": "specialisations 1",
+                "project_id": 30,
+                "keyproject": "keyproject 1",
+                "client": "client 1",
+                "keyprojectrole": "keyprojectrole 1",
+                "keyprojectbenefitsofinvolvement": "keyprojectbenefitsofinvolvement 1",
+                "project_id_text": "30",
+                "photourls": "https://wsponline.sharepoint.com/:i:/r/sites/NZ-DPT-NZGeospatial/Media%20Library/Images/Rockstar%20Capability%20project/Employee%20pictures/Hillier,%20Andy.png?csf=1&web=1&e=dzRsSI"
+            }
+        },
+        {
+            "id": 12,
+            "type": "Feature",
+            "properties": {
+                "objectid": 12,
+                "lastname": "lastname 2",
+                "firstname": "firstname 2",
+                "title": "title 2a",
+                "location": "Auckland",
+                "specialisations": "specialisations 2a",
+                "project_id": 60,
+                "keyproject": "keyproject 2a",
+                "client": "client 2a",
+                "keyprojectrole": "keyprojectrole 2a",
+                "keyprojectbenefitsofinvolvement": "keyprojectbenefitsofinvolvement 2a",
+                "project_id_text": "60",
+                "photourls": "https://wsponline.sharepoint.com/:i:/r/sites/NZ-DPT-NZGeospatial/Media%20Library/Images/Rockstar%20Capability%20project/Employee%20pictures/Firth,%20Richard.png?csf=1&web=1&e=pAVEBY"
+            }
+        },
+        {
+            "id": 13,
+            "type": "Feature",
+            "properties": {
+                "objectid": 13,
+                "lastname": "lastname 2",
+                "firstname": "firstname 2",
+                "title": "title 2b",
+                "location": "Auckland",
+                "specialisations": "specialisations 2b",
+                "project_id": 65,
+                "keyproject": "keyproject 2b",
+                "client": "client 2b",
+                "keyprojectrole": "keyprojectrole 2b",
+                "keyprojectbenefitsofinvolvement": "keyprojectbenefitsofinvolvement 2b",
+                "project_id_text": "65",
+                "photourls": "https://wsponline.sharepoint.com/:i:/r/sites/NZ-DPT-NZGeospatial/Media%20Library/Images/Rockstar%20Capability%20project/Employee%20pictures/Firth,%20Richard.png?csf=1&web=1&e=pAVEBY"
+            }
+        }
+    ],
+    "type": "FeatureCollection"
+}
