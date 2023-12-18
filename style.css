@@ -147,14 +147,14 @@ button.esri-icon-close {
   font-size: 1em;
   margin: 2em auto;
   display: block;
-  border: 1px solid rgba(2, 105, 161, 1);
+  border: 1px solid #ff4337;
   background: transparent;
-  color: rgba(2, 105, 161, 1);
+  color: #ff4337;
 }
 
 #start-globe:hover {
   color: white;
-  background: rgb(2, 105, 161);
+  background: #ff4337;
   border: 1px solid white;
   transition: all 0.5s;
   cursor: pointer;
@@ -170,4 +170,46 @@ button.esri-icon-close {
   visibility: hidden;
 }
 
+button.esri-button {
+  background: transparent;
+  color: black;
+  border: transparent;
+  box-shadow: none;
+  text-align: center;
+  width: max-content !important;
+  /* height: 3em; */
+  /* width: 7em; */
+  white-space:nowrap;
+  overflow:hidden;
+}
 
+button.esri-button:hover {
+  color:#ff4337;
+  border: transparent;
+  background: transparent;
+}
+
+#actions {
+  background: transparent;
+  border: transparent;
+  box-shadow: none;
+}
+
+.button-container {
+  display: flex;
+}
+
+#rockstarTitle {
+  background: transparent;
+  border: transparent;
+  box-shadow: none;
+}
+
+#wspLogo {
+  transform: translate(0, 15px);
+  padding-right: 12px;
+}
+
+#buttonRockstar {
+  font-weight: bold;
+}
