@@ -51,7 +51,10 @@
       "esri/portal/Portal",
       "esri/identity/OAuthInfo",
       "esri/identity/IdentityManager",
-      "esri/portal/PortalQueryParams"
+      "esri/portal/PortalQueryParams",
+
+      "esri/layers/ElevationLayer",
+      "esri/layers/BaseElevationLayer"  
 
       // "esri/core/watchUtils"
     ], function (
@@ -74,7 +77,9 @@
       Portal,
       OAuthInfo,
       esriId,
-      PortalQueryParams
+      PortalQueryParams,
+      ElevationLayer, 
+      BaseElevationLayer
       ) {
 
 
@@ -100,8 +105,8 @@
         alphaCompositingEnabled: true,
         qualityProfile: "high",
         camera: {
-          position: [174.763336, -36.848461, 19921223.30821],
-          heading: 2.03,
+          position: [174.7787, -41.2924, 4000000.0],
+          heading: 0,
           tilt: 0.13
         },
         environment: {
@@ -137,18 +142,38 @@
         }
       });
 
+      
+
       view.ui.remove("navigation-toggle");
 
-      // map.ground.layers = [new ExaggeratedElevationLayer({
-      //   exaggerationBathymetry: 0,
-      //   exaggerationTopography: 2
-      // })];
+      view.ui.components = ["attribution"];
+
+      console.log(view.ui)
+
+
+
+
+      // ---------------------------
+      // Elevation
+      // ---------------------------
+
+
+      let elevLyr = new ElevationLayer({
+        // Custom elevation service
+        url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+      });
+      // Add elevation layer to the map's ground.
+      map.ground.layers.add(elevLyr);
+
 
       const origin = new Point({
         x: 0, y: -90, z: -(2 * R)
       });
 
 
+      // -------------------------
+      // Renderers
+      // -------------------------
 
       const renderer = new SimpleRenderer({
           symbol: new PointSymbol3D({
@@ -157,7 +182,7 @@
                 resource: {
                   href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg?_sm_au_=iHV6TFWPWQ37L4Br08C1pKs314jqc"
                 },
-                size: 16,
+                size: 28,
                 material: {
                   color: "#ff4337",
                 },
@@ -174,7 +199,7 @@
               resource: {
                 href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg?_sm_au_=iHV6TFWPWQ37L4Br08C1pKs314jqc"
               },
-              size: 16,
+              size: 28,
               material: {
                 color: "#d3d3d3",
               },
@@ -183,6 +208,13 @@
           ],
         }),
       });
+
+
+
+
+      // -------------------------
+      // City Layer
+      // -------------------------
 
       const populationLayer = new FeatureLayer({
         url:
@@ -213,61 +245,57 @@
 
       map.layers.add(populationLayer)
 
+      // -------------------------
+      // Wellies Boundary
+      // -------------------------
 
-      
-      //  //Create a new OAuthInfo object.
-      //  const info = new OAuthInfo({
-      //     // Swap this ID out with an app ID registered in your ArcGIS Organization.
-      //     appId: "2121e62c2c99458d95bcd299677f27ec",
-      //     // Add the portalUrl property if using your own portal.
-      //     portalUrl: "https://nz-maps.wsp.com/portal"
-      //     // Set the authNamespace property to prevent the user's signed in state
-      //     // from being shared with other apps on the same domain with the same authNamespace value.
-      //     // authNamespace: "portal_oauth_inline",
-      //     // Set popup to true to show the OAuth sign-in page in a separate popup window.
-      //     //popup: true
-      //   });
+      const zoneRendererWGB = {
+        type: "simple",
+        symbol: {
+          color: "#ff4337",
+          type: "simple-fill",
+          style: "solid",
+          outline: {
+            style: "none"
+          }
+        }
+      };
 
-      //   // Add the OAuthInfo to the IdentityManager.
-      //   esriId.registerOAuthInfos([info]);
+      const zoneRendererWGBGrey = {
+        type: "simple",
+        symbol: {
+          color: "#888888",
+          type: "simple-fill",
+          style: "solid",
+          outline: {
+            style: "none"
+          }
+        }
+      };
 
-        
+      const wellyBoundryLayer = new GeoJSONLayer({
+        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/welly-boundary.geojson?_sm_au_=iHVP17wV41rFJn7c08C1pKs314jqc",
+        renderer: zoneRendererWGBGrey,
+        opacity: 0.8
+      });
 
-      //   const rockstarFeature = new FeatureLayer({
-      //   url: "https://nz-maps.wsp.com/server/rest/services/Hosted/RockstarCapabilityProject/FeatureServer/0",
-      //   elevationInfo: {
-      //     mode: "relative-to-ground",
-      //     offset: 1,
-      //   },
-      //   copyright: "Data from <a href=\"https://nz-maps.wsp.com/portal/home/item.html?id=a97ccc3fd99847e7999f4d887b3be1c8\" target=\"_blank\">NZ Maps Rockstar</a> GIS Data | <a href=\"https://visibleearth.nasa.gov/view.php?id=57747\" target=\"_blank\">Cloud image</a> from NASA Goddard Space Flight Center (image by Reto Stöckli) for the cloud layer",
-      //   renderer: renderer,
-      //   popupTemplate: {
-      //     title: "{project}",
-      //     content: `
-      //       <div class="popupImage">
-      //         <img src="https://i.ibb.co/3Yffpvn/Header-Image.png" alt="Rockstar Header"/>
-      //       </div>
-      //       <div class="popupDescription">
-      //         <p class="info">
-      //           <span class="esri-icon-favorites"></span> {project}
-      //         </p>
-      //         <p class="info">
-      //           <span class="esri-icon-map-pin"></span> New Zealand
-      //         </p>
-      //         <p class="info">
-      //           <span class="esri-icon-documentation"></span> {client}
-      //         </p>
-      //       </div>
-      //     `
-      //   }
-      // });
-
-      // map.layers.add(rockstarFeature)
+      map.layers.add(wellyBoundryLayer);
 
 
+      const wellyRegionBoundryLayer = new GeoJSONLayer({
+        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/welly-region-boundary.geojson?_sm_au_=iHVP17wV41rFJn7c08C1pKs314jqc",
+        renderer: zoneRendererWGBGrey,
+        opacity: 0.8
+      });
+
+      map.layers.add(wellyRegionBoundryLayer);
+
+
+      // -------------------------
+      // Rockstar Layer
+      // -------------------------
 
       const rockstarLayer = new GeoJSONLayer({
-        // url: "extreme-points.geojson",
         url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/project-locations.geojson?_sm_au_=iHV6TFWPWQ37L4Br08C1pKs314jqc",
         elevationInfo: {
           mode: "relative-to-ground",
@@ -300,8 +328,6 @@
       });
       map.layers.add(rockstarLayer);
 
-
-
       document.getElementById("close-about").addEventListener("click", closeMenu);
 
       document.getElementById("start-globe").addEventListener("click", function () {
@@ -323,6 +349,10 @@
       function closeMenu() {
         document.getElementById("container").style.display = "none";
         view.container.style.filter = "blur(0px)";
+
+        // Once loaded
+        view.ui.add("actions", "top-left");
+        zoomToNz();
       }
 
       let intro = true;
@@ -346,6 +376,210 @@
           requestAnimationFrame(rotate);
         }
       }
+
+      view.ui.add("info", "top-right");
+
+
+
+
+
+      // -------------------------
+      // Button functionality
+      // -------------------------
+      
+      function zoomToNz() {
+        view.goTo({
+          center: [174.7787, -41.2924],
+          zoom: 5,
+          tilt: 20,
+          heading: 0
+        })
+      }
+
+      function zoomToRegion() {
+        view.goTo({
+          center: [174.7787, -41.2924],
+          zoom: 9.5,
+          tilt: 30,
+          heading: 0
+        })
+      }
+
+      function zoomToCity() {
+        view.goTo({
+          center: [174.7787, -41.2924],
+          zoom: 13,
+          tilt: 40,
+          heading: 0
+        })
+      }
+
+      function reloadPage() {
+        location.reload();
+      }
+
+      const btnRs = document.getElementById("buttonRockstar");
+      const btn1 = document.getElementById("button1");
+      const btn2 = document.getElementById("button2");
+      const btn3 = document.getElementById("button3");
+
+      btnRs.addEventListener("click", reloadPage);
+      btn1.addEventListener("click", zoomToNz);
+      btn2.addEventListener("click", zoomToRegion);
+      btn3.addEventListener("click", zoomToCity);
+
+      // -------------------------
+      // Hover functionality
+      // -------------------------
+
+      view
+        .when()
+
+        .then(() => {
+          return wellyBoundryLayer.when();
+        })
+
+        .then((layer) => {
+          const renderer = layer.renderer.clone();
+          layer.renderer = renderer;
+          // Set up an event handler for pointer-down (mobile)
+          // and pointer-move events (mouse)
+          // and retrieve the screen x, y coordinates
+          return view.whenLayerView(layer);
+        })
+
+        .then((layerView) => {
+          view.on("pointer-move", eventHandler);
+          view.on("pointer-down", eventHandler);
+          function eventHandler(event) {
+            // only include graphics from wellyBoundary in the hitTest
+            
+            // the hitTest() checks to see if any graphics from the wellyBoundary
+            // intersect the x, y coordinates of the pointer
+            view.hitTest(event, {include: wellyBoundryLayer}).then(getGraphics);
+            view.hitTest(event, {include: wellyRegionBoundryLayer}).then(getGraphics2);
+            view.hitTest(event, {include: rockstarLayer}).then(getGraphicsPoint);
+          }
+
+          function getGraphics(response) {
+            if (response.results.length) {
+              wellyBoundryLayer.renderer = zoneRendererWGB;
+              
+            } else {
+              wellyBoundryLayer.renderer = zoneRendererWGBGrey;
+  
+            }
+          }
+
+          function getGraphics2(response) {
+            if (response.results.length) 
+            {
+              wellyRegionBoundryLayer.renderer = zoneRendererWGB;
+            }
+            else 
+            {
+              wellyRegionBoundryLayer.renderer = zoneRendererWGBGrey;
+            }        
+          }
+
+          function getGraphicsPoint(response) {
+            if (response.results.length) 
+            {
+              rockstarLayer.renderer = renderer;
+            }
+            else 
+            {
+              rockstarLayer.renderer = rendererGrey;
+            }        
+          }
+        });
+
+
+      // -------------------------
+      // Click Functionality
+      // -------------------------
+
+      const goToOptions = {
+        speedFactor: 1, // animation is 10 times slower than default
+        easing: "out-cubic" // easing function to slow down when reaching the target
+
+      };
+
+
+      // Set up a click event handler and retrieve the screen x, y coordinates
+      view.on("click", function(event) {        
+        // the hitTest() checks to see if any graphics in the view
+        // intersect the given screen x, y coordinates
+        view.hitTest(event)
+          .then(getSelected);
+      });
+
+
+      function getSelected(response) {
+        
+        if (response.results.length) {
+          const feature = response.results[0];
+
+          if (feature.graphic.geometry.type == "polygon")
+          {
+            view.goTo(response.results[0].layer.fullExtent, goToOptions)
+
+          } 
+          else if (feature.graphic.geometry.type == "point")
+          {
+            view.goTo({
+              center: feature.graphic.geometry,
+              zoom: 16,
+              tilt: 60,
+              heading: 0
+
+            });
+          }
+        }
+      }
+
+
+      // -------------------------
+      // Zoom Functionality
+      // -------------------------
+
+      view.watch('zoom', zoomChanged);
+
+      function zoomChanged(newValue, oldValue, property, object){
+
+        if (Math.floor(newValue) != Math.floor(oldValue)) {
+
+          if (newValue > 12) {
+
+            rockstarLayer.visible = true;
+            wellyRegionBoundryLayer.visible = false;
+            wellyBoundryLayer.visible = false
+
+          } else if (newValue > 9) {
+
+            rockstarLayer.visible = false;
+            wellyRegionBoundryLayer.visible = false;
+            wellyBoundryLayer.visible = true
+
+          } else if (newValue > 4) {
+
+            rockstarLayer.visible = false;
+            wellyRegionBoundryLayer.visible = true;
+            wellyBoundryLayer.visible = false
+
+
+          } else {
+
+            rockstarLayer.visible = false;
+            wellyRegionBoundryLayer.visible = false;
+            wellyBoundryLayer.visible = false
+          }
+
+        }
+      };
+
+      
+
     });
   </script>
 </head>
@@ -353,6 +587,25 @@
 <body>
   <div id="viewDiv">
     <div id="about">About this globe</div>
+  </div>
+  <div id="actions" class="esri-widget">
+    <div class="button-container">
+      <a id="wspLogo" class=" logo" title="WSP">
+        <svg aria-labelledby="title" xmlns="http://www.w3.org/2000/svg" class="a-wsp-logo hidden-lg" width="57.372" height="27.285" viewBox="0 0 57.372 27.285"><title id="title" lang="en">WSP</title><defs></defs><path d="M85.453,25.95a11.223,11.223,0,0,0-2.613-7.373h4.3a12.35,12.35,0,0,1,2.283,7.373v.011a12.358,12.358,0,0,1-2.291,7.385h-4.3a11.218,11.218,0,0,0,2.621-7.385Z" transform="translate(-32.048 -18.577)"></path><path d="M3.968,0H0L5.445,14.766H7.554l.929-2.52Z" transform="translate(0 0)"></path><path d="M17.419,0H13.451L18.9,14.766H21l.929-2.52Z" transform="translate(-2.807 0)"></path><path d="M55.761,27.285V0h-3.8V27.285Z" transform="translate(-10.843 0)"></path><path d="M47.912,20.767a6.507,6.507,0,0,1,.512-2.19H51.9a3.188,3.188,0,0,0-.252,2.429,3.638,3.638,0,0,0,1.622,1.924,23.1,23.1,0,0,0,2.871,1.331,11.618,11.618,0,0,1,2.8,1.673A5.551,5.551,0,0,1,61,29.842c.015.192.021.385.021.579a6.516,6.516,0,0,1-.61,2.92H56.846a3.977,3.977,0,0,0,.577-2.16c-.125-1.86-2.4-2.878-4.3-3.723-.29-.134-.575-.255-.847-.383a10.864,10.864,0,0,1-2.37-1.433,5.031,5.031,0,0,1-1.641-2.124,6.146,6.146,0,0,1-.372-2.485C47.9,20.944,47.9,20.855,47.912,20.767Z" transform="translate(-24.756 -18.577)"></path></svg>
+      </a>
+      <button class="esri-button" id="buttonRockstar">Rockstar Viewer</button>
+      <p>></p>
+      <button class="esri-button" id="button1">NZ</button>
+      <p>></p>
+      <button class="esri-button" id="button2">Region</button>
+      <p>></p>
+      <button class="esri-button" id="button3">City</button>
+    </div>
+  </div>
+  <div id="info">
+    <span id="name"></span> <br />
+    <span id="category"></span> <br />
+    <span id="wind"></span>
   </div>
   <div id="container">
     <div id="introDiv">
