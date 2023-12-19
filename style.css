@@ -7,8 +7,16 @@ body,
   height: 100%;
   width: 100%;
   color: #323232;
-  font-family: "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+  /* font-family: "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif; */
+  font-family: 'Montserrat', sans-serif;
 }
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+
+
 
 body {
   background: radial-gradient(#ffffff, #e0e0e0);
