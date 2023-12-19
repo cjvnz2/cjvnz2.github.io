@@ -1,0 +1,62 @@
+{
+    "type": "FeatureCollection",
+    "crs": {
+        "type": "name",
+        "properties": {
+            "name": "EPSG:4326"
+        }
+    },
+    "properties": {
+        "exceededTransferLimit": true
+    },
+    "features": [
+        {
+            "type": "Feature",
+            "id": 1,
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    174.7645,
+                    -36.8509
+                ]
+            },
+            "properties": {
+                "OBJECTID": 1,
+                "CITY_NAME": "Auckland",
+                "CNTRY_NAME": "New Zealand"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": 2,
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    174.7787,
+                    41.2924
+                ]
+            },
+            "properties": {
+                "OBJECTID": 2,
+                "CITY_NAME": "Wellington",
+                "CNTRY_NAME": "New Zealand"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": 3,
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    172.6306,
+                    -43.5320
+                ]
+            },
+            "properties": {
+                "OBJECTID": 3,
+                "CITY_NAME": "Christchurch",
+                "CNTRY_NAME": "New Zealand"
+            }
+        },
+    ]
+}
