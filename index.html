@@ -105,7 +105,7 @@
         alphaCompositingEnabled: true,
         qualityProfile: "high",
         camera: {
-          position: [174.7787, -41.2924, 4000000.0],
+          position: [174.7901, -41.2622, 4000000.0],
           heading: 0,
           tilt: 0.13
         },
@@ -142,16 +142,10 @@
         }
       });
 
-      
 
       view.ui.remove("navigation-toggle");
 
       view.ui.components = ["attribution"];
-
-      console.log(view.ui)
-
-
-
 
       // ---------------------------
       // Elevation
@@ -169,6 +163,13 @@
       const origin = new Point({
         x: 0, y: -90, z: -(2 * R)
       });
+
+
+      const goToOptions = {
+        speedFactor: 0.5, // animation is 10 times slower than default
+        easing: "out-cubic" // easing function to slow down when reaching the target
+
+      };
 
 
       // -------------------------
@@ -353,6 +354,9 @@
         // Once loaded
         view.ui.add("actions", "top-left");
         zoomToNz();
+        // display: flex;
+        var buttonContainer = document.querySelector("#button-container-id");
+        buttonContainer.style.display = "flex";
       }
 
       let intro = true;
@@ -382,7 +386,6 @@
 
 
 
-
       // -------------------------
       // Button functionality
       // -------------------------
@@ -393,7 +396,7 @@
           zoom: 5,
           tilt: 20,
           heading: 0
-        })
+        }, goToOptions)
       }
 
       function zoomToRegion() {
@@ -402,7 +405,7 @@
           zoom: 9.5,
           tilt: 30,
           heading: 0
-        })
+        }, goToOptions)
       }
 
       function zoomToCity() {
@@ -411,7 +414,7 @@
           zoom: 13,
           tilt: 40,
           heading: 0
-        })
+        }, goToOptions)
       }
 
       function reloadPage() {
@@ -499,12 +502,8 @@
       // Click Functionality
       // -------------------------
 
-      const goToOptions = {
-        speedFactor: 1, // animation is 10 times slower than default
-        easing: "out-cubic" // easing function to slow down when reaching the target
-
-      };
-
+      view.ui.add("circleContainer", "manual");
+      view.ui.add("circleContainerCenter", "manual");
 
       // Set up a click event handler and retrieve the screen x, y coordinates
       view.on("click", function(event) {        
@@ -512,10 +511,11 @@
         // intersect the given screen x, y coordinates
         view.hitTest(event)
           .then(getSelected);
+      
       });
 
 
-      function getSelected(response) {
+      function getSelected(response) {        
         
         if (response.results.length) {
           const feature = response.results[0];
@@ -533,9 +533,56 @@
               tilt: 60,
               heading: 0
 
-            });
+            }, goToOptions);
+
+
+
+            // -------------------------
+            // Run click effect
+            // -------------------------
+
+            var x = response.screenPoint.x;
+            var y = response.screenPoint.y;
+            var circle = document.querySelector("#circleContainer");
+            circle.style.display = "flex";
+            circle.style.position = "absolute";
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+
+            x = window.innerWidth / 2;
+            y = window.innerHeight / 2;
+            circle = document.querySelector("#circleContainerCenter");
+            circle.style.display = "flex";
+            circle.style.position = "absolute";
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+
+            restartAnimation();
+
           }
         }
+      }
+
+      
+      function restartAnimation() {
+        let circle1 = document.querySelector("#c1");
+        let circle2 = document.querySelector("#c2");
+        let circle3 = document.querySelector("#c3");
+        let circle4 = document.querySelector("#c4");
+
+        circle1.style.animationName = "none";
+        circle2.style.animationName = "none";
+        circle3.style.animationName = "none";
+        circle4.style.animationName = "none";
+
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                circle1.style.animationName = "";
+                circle2.style.animationName = "";
+                circle3.style.animationName = "";
+                circle4.style.animationName = "";
+            }, 0);
+        });
       }
 
 
@@ -578,8 +625,6 @@
         }
       };
 
-      
-
     });
   </script>
 </head>
@@ -589,7 +634,7 @@
     <div id="about">About this globe</div>
   </div>
   <div id="actions" class="esri-widget">
-    <div class="button-container">
+    <div class="button-container" id="button-container-id">
       <a id="wspLogo" class=" logo" title="WSP">
         <svg aria-labelledby="title" xmlns="http://www.w3.org/2000/svg" class="a-wsp-logo hidden-lg" width="57.372" height="27.285" viewBox="0 0 57.372 27.285"><title id="title" lang="en">WSP</title><defs></defs><path d="M85.453,25.95a11.223,11.223,0,0,0-2.613-7.373h4.3a12.35,12.35,0,0,1,2.283,7.373v.011a12.358,12.358,0,0,1-2.291,7.385h-4.3a11.218,11.218,0,0,0,2.621-7.385Z" transform="translate(-32.048 -18.577)"></path><path d="M3.968,0H0L5.445,14.766H7.554l.929-2.52Z" transform="translate(0 0)"></path><path d="M17.419,0H13.451L18.9,14.766H21l.929-2.52Z" transform="translate(-2.807 0)"></path><path d="M55.761,27.285V0h-3.8V27.285Z" transform="translate(-10.843 0)"></path><path d="M47.912,20.767a6.507,6.507,0,0,1,.512-2.19H51.9a3.188,3.188,0,0,0-.252,2.429,3.638,3.638,0,0,0,1.622,1.924,23.1,23.1,0,0,0,2.871,1.331,11.618,11.618,0,0,1,2.8,1.673A5.551,5.551,0,0,1,61,29.842c.015.192.021.385.021.579a6.516,6.516,0,0,1-.61,2.92H56.846a3.977,3.977,0,0,0,.577-2.16c-.125-1.86-2.4-2.878-4.3-3.723-.29-.134-.575-.255-.847-.383a10.864,10.864,0,0,1-2.37-1.433,5.031,5.031,0,0,1-1.641-2.124,6.146,6.146,0,0,1-.372-2.485C47.9,20.944,47.9,20.855,47.912,20.767Z" transform="translate(-24.756 -18.577)"></path></svg>
       </a>
@@ -602,6 +647,18 @@
       <button class="esri-button" id="button3">City</button>
     </div>
   </div>
+
+
+  <div id="circleContainer">
+    <div class="circle" id="c1" style="animation-delay: 0.0s"></div>
+    <div class="circle" id="c2" style="animation-delay: 0.05s"></div>
+  </div>
+
+  <div id="circleContainerCenter">
+    <div class="circle" id="c3" style="animation-delay: 2.0s"></div>
+    <div class="circle" id="c4" style="animation-delay: 2.05s"></div>
+  </div>
+
   <div id="info">
     <span id="name"></span> <br />
     <span id="category"></span> <br />
