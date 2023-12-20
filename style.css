@@ -1,3 +1,11 @@
+:root {
+  /* Custom Variables */
+  --wsp-red: #ff4337;
+
+  --sidebar-width: 80px;
+}
+
+
 html,
 body,
 #viewDiv,
@@ -5,11 +13,55 @@ body,
   padding: 0;
   margin: 0;
   height: 100%;
-  width: 100%;
+  width: 100% - var(--sidebar-width);
   color: #323232;
   /* font-family: "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif; */
   font-family: 'Montserrat', sans-serif;
 }
+
+#viewDiv {
+  margin-left: var(--sidebar-width);
+}
+
+/* The sidebar menu */
+.sidenav {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: var(--sidebar-width); /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: var(--wsp-red); /* Red */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: white;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+#wspLogo {
+  /* transform: translate(45px, 0); */
+  padding: 0;
+  fill: white;
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 9px;
+  width: 50%;
+}
+
 
 h1 {
   font-family: 'Montserrat', sans-serif;
@@ -29,6 +81,7 @@ body {
 
 .esri-view .esri-view-surface--touch-none:focus::after {
   outline: none !important;
+  /* outline-color: var(--wsp-red); */
 }
 
 /* popup styling */
@@ -125,11 +178,11 @@ p.info {
 
 #container a:hover {
   color: white;
-  background: rgb(2, 105, 161);
+  background: var(--wsp-red);
 }
 
 #container a {
-  color: rgb(2, 105, 161);
+  color: var(--wsp-red);
   text-decoration: none;
   font-weight: bold;
 }
@@ -165,11 +218,13 @@ button.esri-icon-close {
   /* color: #ff4337; */
   color: #636363;
   pointer-events: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
 }
 
 #start-globe:hover {
   color: white !important;
-  background: #ff4337;
+  background: var(--wsp-red);
   border: 1px solid white;
   transition: all 0.5s;
   cursor: pointer;
@@ -196,10 +251,11 @@ button.esri-button {
   /* width: 7em; */
   white-space:nowrap;
   overflow:hidden;
+  font-family: 'Montserrat', sans-serif;
 }
 
 button.esri-button:hover {
-  color:#ff4337;
+  color:var(--wsp-red);
   border: transparent;
   background: transparent;
 }
@@ -221,19 +277,9 @@ button.esri-button:hover {
   box-shadow: none;
 }
 
-#wspLogo {
-  transform: translate(0, 15px);
-  padding-right: 12px;
-  color: #ff4337;
-}
-
 #buttonRockstar {
   font-weight: bold;
 }
-
-
-
-
 
 #circleContainer {
   width: 0;
@@ -286,7 +332,7 @@ button.esri-button:hover {
   height: 150px;
   position: absolute;
   opacity: 0;
-  border: 2px solid #ff4337;
+  border: 2px solid var(--wsp-red);
   animation: scaleIn 0.5s linear;
   /* animation: scaleIn 1s cubic-bezier(.36, .11, .89, .32); */
   user-select: none;

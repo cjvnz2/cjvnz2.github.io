@@ -629,8 +629,10 @@
             circle.style.left = `${x}px`;
             circle.style.top = `${y}px`;
 
-            x = window.innerWidth / 2;
-            y = window.innerHeight / 2;
+            console.log(view)
+
+            x = view.width / 2;
+            y = view.height / 2;
             circle = document.querySelector("#circleContainerCenter");
             circle.style.display = "flex";
             circle.style.position = "absolute";
@@ -710,14 +712,21 @@
 </head>
 
 <body>
+  <div class="sidenav">
+    <a id="wspLogo" class=" logo" title="WSP">
+      <svg aria-labelledby="title" xmlns="http://www.w3.org/2000/svg" class="a-wsp-logo hidden-lg" width="43.00" height="20.46" viewBox="0 0 57.372 27.285"><title id="title" lang="en">WSP</title><defs></defs><path d="M85.453,25.95a11.223,11.223,0,0,0-2.613-7.373h4.3a12.35,12.35,0,0,1,2.283,7.373v.011a12.358,12.358,0,0,1-2.291,7.385h-4.3a11.218,11.218,0,0,0,2.621-7.385Z" transform="translate(-32.048 -18.577)"></path><path d="M3.968,0H0L5.445,14.766H7.554l.929-2.52Z" transform="translate(0 0)"></path><path d="M17.419,0H13.451L18.9,14.766H21l.929-2.52Z" transform="translate(-2.807 0)"></path><path d="M55.761,27.285V0h-3.8V27.285Z" transform="translate(-10.843 0)"></path><path d="M47.912,20.767a6.507,6.507,0,0,1,.512-2.19H51.9a3.188,3.188,0,0,0-.252,2.429,3.638,3.638,0,0,0,1.622,1.924,23.1,23.1,0,0,0,2.871,1.331,11.618,11.618,0,0,1,2.8,1.673A5.551,5.551,0,0,1,61,29.842c.015.192.021.385.021.579a6.516,6.516,0,0,1-.61,2.92H56.846a3.977,3.977,0,0,0,.577-2.16c-.125-1.86-2.4-2.878-4.3-3.723-.29-.134-.575-.255-.847-.383a10.864,10.864,0,0,1-2.37-1.433,5.031,5.031,0,0,1-1.641-2.124,6.146,6.146,0,0,1-.372-2.485C47.9,20.944,47.9,20.855,47.912,20.767Z" transform="translate(-24.756 -18.577)"></path></svg>
+    </a>
+  </div>  
+
   <div id="viewDiv">
     <div id="about">About this globe</div>
   </div>
+
   <div id="actions" class="esri-widget">
     <div class="button-container" id="button-container-id">
-      <a id="wspLogo" class=" logo" title="WSP">
+      <!-- <a id="wspLogo" class=" logo" title="WSP">
         <svg aria-labelledby="title" xmlns="http://www.w3.org/2000/svg" class="a-wsp-logo hidden-lg" width="57.372" height="27.285" viewBox="0 0 57.372 27.285"><title id="title" lang="en">WSP</title><defs></defs><path d="M85.453,25.95a11.223,11.223,0,0,0-2.613-7.373h4.3a12.35,12.35,0,0,1,2.283,7.373v.011a12.358,12.358,0,0,1-2.291,7.385h-4.3a11.218,11.218,0,0,0,2.621-7.385Z" transform="translate(-32.048 -18.577)"></path><path d="M3.968,0H0L5.445,14.766H7.554l.929-2.52Z" transform="translate(0 0)"></path><path d="M17.419,0H13.451L18.9,14.766H21l.929-2.52Z" transform="translate(-2.807 0)"></path><path d="M55.761,27.285V0h-3.8V27.285Z" transform="translate(-10.843 0)"></path><path d="M47.912,20.767a6.507,6.507,0,0,1,.512-2.19H51.9a3.188,3.188,0,0,0-.252,2.429,3.638,3.638,0,0,0,1.622,1.924,23.1,23.1,0,0,0,2.871,1.331,11.618,11.618,0,0,1,2.8,1.673A5.551,5.551,0,0,1,61,29.842c.015.192.021.385.021.579a6.516,6.516,0,0,1-.61,2.92H56.846a3.977,3.977,0,0,0,.577-2.16c-.125-1.86-2.4-2.878-4.3-3.723-.29-.134-.575-.255-.847-.383a10.864,10.864,0,0,1-2.37-1.433,5.031,5.031,0,0,1-1.641-2.124,6.146,6.146,0,0,1-.372-2.485C47.9,20.944,47.9,20.855,47.912,20.767Z" transform="translate(-24.756 -18.577)"></path></svg>
-      </a>
+      </a> -->
       <button class="esri-button" id="buttonRockstar">Rockstar</button>
       <p>></p>
       <button class="esri-button" id="button1">NZ</button>
@@ -744,6 +753,7 @@
     <span id="category"></span> <br />
     <span id="wind"></span>
   </div>
+
   <div id="container">
     <div id="introDiv">
       <h1>Rockstar Viewer</h1>
@@ -751,22 +761,17 @@
         <p> 
           WSP project locations mapped in NZ along with corresponding employee information.  
           <br><br>
-          This prrof of concept only includes one project in Wellington. Click the Wellington region to begin. 
+          This proof of concept only includes one project in Wellington. Click the Wellington region to begin. 
         </p>
         <button id="start-globe">Loading...</button>
       </div>
       <div id="show-about" class="hidden">
         <button id="close-about" class="esri-icon-close"></button>
-        <p>Info regarding original project: 
-          <br> <br>
-          3D Globe created by <a href="https://www.esri.com/arcgis-blog/author/j_nelson/" target="_blank">John</a> and
-          <a href="https://www.esri.com/arcgis-blog/author/raluca_zurich/" target="_blank">Raluca</a> after getting
-          inspired by the <a href="https://www.half-earthproject.org/maps/" target="_blank">Half-Earth Project globe</a>, and <a href="https://www.fonterra.com/nz/en/campaign/from-here-to-everywhere.html#/home"
-            target="_blank">this awesome globe</a> and <a href="https://www.instagram.com/p/Bt8zyI-gsqW/"
-            target="_blank">this other awesome globe</a>. We used <a
-            href="https://developers.arcgis.com/javascript/" target="_blank">ArcGIS API for JavaScript</a> to create the interactive globe and <a href="https://pro.arcgis.com/"
-            target="_blank">ArcGIS Pro</a> to create the basemap. Many thanks to Arno Fiva, Christian Iten and Jesse van den Kieboom for the awesome feedback.</p>
-        <p>Read this <a href="https://www.esri.com/arcgis-blog/products/js-api-arcgis/3d-gis/interactive-3d-globe/" target="_blank">blog post</a> to find out how the globe was created. For the curious coders, here is the <a href="https://github.com/RalucaNicola/the-globe-of-extremes" target="_blank">Github repository</a>.</p>
+        <p> 
+          WSP project locations mapped in NZ along with corresponding employee information.  
+          <br><br>
+          This prrof of concept only includes one project in Wellington. Click the Wellington region to begin. 
+        </p> 
       </div>
     </div>
   </div>
