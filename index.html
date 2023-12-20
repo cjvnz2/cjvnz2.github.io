@@ -142,8 +142,9 @@
           collapseEnabled: false
         },
         highlightOptions: {
-          color: [255, 255, 255],
-          haloOpacity: 0.5
+          color: [255, 67, 55],
+          haloOpacity: 0.0,
+          fillOpacity: 1
         }
       });
 
@@ -188,7 +189,7 @@
                 resource: {
                   href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg"
                 },
-                size: 28,
+                size: 32,
                 material: {
                   color: "#ff4337",
                 },
@@ -205,7 +206,7 @@
               resource: {
                 href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg"
               },
-              size: 28,
+              size: 32,
               material: {
                 color: "#c3c3c3",
               },
@@ -231,6 +232,7 @@
           ],
         }),
       });
+
 
 
       // -------------------------
@@ -353,7 +355,7 @@
           offset: 1
         },
         copyright: "Data from <a href=\"https://nz-maps.wsp.com/portal/home/item.html?id=a97ccc3fd99847e7999f4d887b3be1c8\" target=\"_blank\">NZ Maps Rockstar</a> GIS Data | <a href=\"https://visibleearth.nasa.gov/view.php?id=57747\" target=\"_blank\">Cloud image</a> from NASA Goddard Space Flight Center (image by Reto Stöckli) for the cloud layer",
-        renderer: renderer,
+        renderer: rendererGrey,
         popupTemplate: {
           title: "{project}",
           content: `
@@ -365,7 +367,7 @@
                 <span class="esri-icon-favorites"></span> {project}
               </p>
               <p class="info">
-                <span class="esri-icon-map-pin"></span> New Zealand
+                <span class="esri-icon-map-pin"></span> {objectid_1}
               </p>
               <p class="info">
                 <span class="esri-icon-documentation"></span> {client}
@@ -431,8 +433,6 @@
         }
       }
 
-      view.ui.add("info", "top-right");
-
 
 
 
@@ -462,7 +462,7 @@
         view.goTo({
           center: [174.7787, -41.2924],
           zoom: 13,
-          tilt: 40,
+          tilt: 70,
           heading: 0
         }, goToOptions)
       }
@@ -482,9 +482,16 @@
       btn3.addEventListener("click", zoomToCity);
 
 
+      // const employee1 = document.getElementById("employee1");
+      // employee1.addEventListener("click", zoomToCity);
+
+
       // -------------------------
       // Wait till application is loaded
       // -------------------------
+
+      // these two highlight handlers are used for selection and hovering over features
+      let highlightSelect;
 
       view
         .when()
@@ -521,6 +528,10 @@
 
         .then((layerView) => {
 
+
+
+
+
           view.on("pointer-move", eventHandler);
           view.on("pointer-down", eventHandler);
           function eventHandler(event) {
@@ -532,6 +543,7 @@
             view.hitTest(event, {include: wellyRegionBoundryLayer}).then(getGraphics2);
             view.hitTest(event, {include: rockstarLayer}).then(getGraphicsPoint);
             view.hitTest(event, {include: nzCityLayer}).then(getGraphicsPointCity);
+
           }
 
           function getGraphics(response) {
@@ -554,11 +566,24 @@
           function getGraphicsPoint(response) {
             if (response.results.length) 
             {
-              rockstarLayer.renderer = renderer;
+              // let objID = response.results[0].graphic.attributes.objectid_1;
+              // console.log(objID);
+              // console.log("-----------------------")
+              // console.log(rockstarLayer)
+              // highlightSelect = layerView.highlight(feature.attributes["OBJECTID"]);
+              // let pinColor = rockstarLayer.renderer.symbol.symbolLayers.items[0].material.color;
+              // pinColor = "#ff4337";
+              // console.log(rockstarLayer.renderer.symbol.symbolLayers.items[0].material);
+              // rockstarLayer.renderer = renderer;
+              // rockstarLayer.setRenderer(renderer);
+
             }
             else 
             {
-              rockstarLayer.renderer = rendererGrey;
+              // let pinColor = rockstarLayer.renderer.symbol.symbolLayers.items[0].material.color;
+              // pinColor = "#c3c3c3";
+              // rockstarLayer.renderer = rendererGrey;
+              // rockstarLayer.setRenderer(rendererGrey);
             }        
           }
           function getGraphicsPointCity(response) {
@@ -582,7 +607,6 @@
       // -------------------------
 
       view.ui.add("circleContainer", "manual");
-      view.ui.add("circleContainerCenter", "manual");
 
       // Set up a click event handler and retrieve the screen x, y coordinates
       view.on("click", function(event) {        
@@ -609,38 +633,32 @@
             view.goTo({
               center: feature.graphic.geometry,
               zoom: 16,
-              tilt: 60,
+              tilt: 70,
               heading: 0
 
             }, {
-              speedFactor: 1.5, // animation is 10 times slower than default
+              speedFactor: 1.5, // animation is x times faster than default
               easing: "out-cubic" // easing function to slow down when reaching the target
             });
 
-            // -------------------------
-            // Run click effect
-            // -------------------------
 
-            var x = response.screenPoint.x;
-            var y = response.screenPoint.y;
-            var circle = document.querySelector("#circleContainer");
-            circle.style.display = "flex";
-            circle.style.position = "absolute";
-            circle.style.left = `${x}px`;
-            circle.style.top = `${y}px`;
+            if (feature.layer.url == "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/project-locations.geojson") {
 
-            console.log(view)
+              // -------------------------
+              // Run click effect
+              // -------------------------
 
-            x = view.width / 2;
-            y = view.height / 2;
-            circle = document.querySelector("#circleContainerCenter");
-            circle.style.display = "flex";
-            circle.style.position = "absolute";
-            circle.style.left = `${x}px`;
-            circle.style.top = `${y}px`;
+              var x = response.screenPoint.x;
+              var y = response.screenPoint.y;
+              var circle = document.querySelector("#circleContainer");
+              circle.style.display = "flex";
+              circle.style.position = "absolute";
+              circle.style.left = `${x}px`;
+              circle.style.top = `${y}px`;
 
-            restartAnimation();
+              restartAnimation();
 
+            }
           }
         }
       }
@@ -650,19 +668,17 @@
         let circle1 = document.querySelector("#c1");
         let circle2 = document.querySelector("#c2");
         let circle3 = document.querySelector("#c3");
-        let circle4 = document.querySelector("#c4");
+
 
         circle1.style.animationName = "none";
         circle2.style.animationName = "none";
         circle3.style.animationName = "none";
-        circle4.style.animationName = "none";
 
         requestAnimationFrame(() => {
             setTimeout(() => {
                 circle1.style.animationName = "";
                 circle2.style.animationName = "";
                 circle3.style.animationName = "";
-                circle4.style.animationName = "";
             }, 0);
         });
       }
@@ -740,18 +756,8 @@
 
   <div id="circleContainer">
     <div class="circle" id="c1" style="animation-delay: 0.0s"></div>
-    <div class="circle" id="c2" style="animation-delay: 0.05s"></div>
-  </div>
-
-  <div id="circleContainerCenter">
-    <div class="circle" id="c3" style="animation-delay: 1.5s"></div>
-    <div class="circle" id="c4" style="animation-delay: 1.55s"></div>
-  </div>
-
-  <div id="info">
-    <span id="name"></span> <br />
-    <span id="category"></span> <br />
-    <span id="wind"></span>
+    <div class="circle" id="c2" style="animation-delay: 0.02s"></div>
+    <div class="circle" id="c3" style="animation-delay: 0.10s"></div>
   </div>
 
   <div id="container">
@@ -770,7 +776,7 @@
         <p> 
           WSP project locations mapped in NZ along with corresponding employee information.  
           <br><br>
-          This prrof of concept only includes one project in Wellington. Click the Wellington region to begin. 
+          This proof of concept only includes one project in Wellington. Click the Wellington region to begin. 
         </p> 
       </div>
     </div>

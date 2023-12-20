@@ -303,28 +303,6 @@ button.esri-button:hover {
   display: none;
 }
 
-#circleContainerCenter {
-  width: 0;
-  height: 0;
-  /* width: 600px;
-  height: 400px; */
-  /* display: flex; */
-  align-items: center;
-  justify-content: center;
-  /* overflow: hidden; */
-  position: relative; 
-  right: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  user-select: none;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
-  pointer-events: none;
-  display: none;
-}
-
 .circle {
   border-radius: 50%;
   /* background-color: #ff4337; */
