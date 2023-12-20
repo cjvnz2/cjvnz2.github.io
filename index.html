@@ -186,7 +186,7 @@
             symbolLayers: [
               new IconSymbol3DLayer({
                 resource: {
-                  href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg?_sm_au_=iHV6TFWPWQ37L4Br08C1pKs314jqc"
+                  href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg"
                 },
                 size: 28,
                 material: {
@@ -203,11 +203,11 @@
           symbolLayers: [
             new IconSymbol3DLayer({
               resource: {
-                href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg?_sm_au_=iHV6TFWPWQ37L4Br08C1pKs314jqc"
+                href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg"
               },
               size: 28,
               material: {
-                color: "#d3d3d3",
+                color: "#c3c3c3",
               },
               anchor: "bottom",
             }),
@@ -215,7 +215,22 @@
         }),
       });
 
-
+      const rendererCityGrey = new SimpleRenderer({
+        symbol: new PointSymbol3D({
+          symbolLayers: [
+            new IconSymbol3DLayer({
+              resource: {
+                href: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/Pushpin.svg"
+              },
+              size: 16,
+              material: {
+                color: "#c3c3c3",
+              },
+              anchor: "bottom",
+            }),
+          ],
+        }),
+      });
 
 
       // -------------------------
@@ -226,7 +241,7 @@
         url:
           "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/World_Cities_analysis/FeatureServer",
         definitionExpression: "POP > 6000000",
-        renderer: rendererGrey,
+        renderer: rendererCityGrey,
         screenSizePerspectiveEnabled: false,
         labelingInfo: [
           new LabelClass({
@@ -237,7 +252,7 @@
                 {
                   type: "text", // autocasts as new TextSymbol3DLayer()
                   material: { color: "#d3d3d3" },
-                  size: 10,
+                  size: 7,
                   halo: {
                     color: "white",
                     size: 1,
@@ -250,6 +265,36 @@
       })
 
       map.layers.add(populationLayer)
+
+
+
+      const nzCityLayer = new GeoJSONLayer({
+        url:
+          "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/nz-city-locations.geojson",
+        renderer: rendererCityGrey,
+        screenSizePerspectiveEnabled: false,
+        labelingInfo: [
+          new LabelClass({
+            labelExpressionInfo: { expression: "$feature.CITY_NAME" },
+            symbol: {
+              type: "label-3d",
+              symbolLayers: [
+                {
+                  type: "text", // autocasts as new TextSymbol3DLayer()
+                  material: { color: "#d3d3d3" },
+                  size: 7,
+                  halo: {
+                    color: "white",
+                    size: 1,
+                  },
+                },
+              ],
+            },
+          }),
+        ],
+      })
+
+      map.layers.add(nzCityLayer)
 
       // -------------------------
       // Wellies Boundary
@@ -280,7 +325,7 @@
       };
 
       const wellyBoundryLayer = new GeoJSONLayer({
-        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/welly-boundary.geojson?_sm_au_=iHVP17wV41rFJn7c08C1pKs314jqc",
+        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/welly-boundary.geojson",
         renderer: zoneRendererWGBGrey,
         opacity: 0.8
       });
@@ -289,7 +334,7 @@
 
 
       const wellyRegionBoundryLayer = new GeoJSONLayer({
-        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/welly-region-boundary.geojson?_sm_au_=iHVP17wV41rFJn7c08C1pKs314jqc",
+        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/welly-region-boundary.geojson",
         renderer: zoneRendererWGBGrey,
         opacity: 0.8
       });
@@ -302,7 +347,7 @@
       // -------------------------
 
       const rockstarLayer = new GeoJSONLayer({
-        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/project-locations.geojson?_sm_au_=iHV6TFWPWQ37L4Br08C1pKs314jqc",
+        url: "https://raw.githubusercontent.com/cjvnz2/cjvnz2.github.io/main/project-locations.geojson",
         elevationInfo: {
           mode: "relative-to-ground",
           offset: 1
@@ -334,6 +379,11 @@
       });
       map.layers.add(rockstarLayer);
 
+
+      // -------------------------
+      // Set up HTML Elements
+      // -------------------------
+
       document.getElementById("close-about").addEventListener("click", closeMenu);
 
       document.getElementById("start-globe").addEventListener("click", function () {
@@ -356,12 +406,7 @@
         document.getElementById("container").style.display = "none";
         view.container.style.filter = "blur(0px)";
 
-        // Once loaded
-        view.ui.add("actions", "top-left");
-        zoomToNz();
-        // display: flex;
-        var buttonContainer = document.querySelector("#button-container-id");
-        buttonContainer.style.display = "flex";
+
       }
 
       let intro = true;
@@ -436,14 +481,32 @@
       btn2.addEventListener("click", zoomToRegion);
       btn3.addEventListener("click", zoomToCity);
 
+
       // -------------------------
-      // Hover functionality
+      // Wait till application is loaded
       // -------------------------
 
       view
         .when()
 
         .then(() => {
+
+          // -------------------------
+          // Once Loaded
+          // -------------------------
+          view.ui.add("actions", "top-left");
+          zoomToNz();
+          document.querySelector("#button-container-id").style.display = "flex";
+
+          document.querySelector("#start-globe").innerHTML = "Click to expore"
+          document.querySelector("#start-globe").style.pointerEvents  = "auto";
+          document.querySelector("#start-globe").style.color  = "#ff4337";
+          document.querySelector("#start-globe").style.border  = "1px solid #ff4337";
+
+
+          // -------------------------
+          // Check when boundry layer is loaded, for HOVER FUNCTIONALITY
+          // -------------------------
           return wellyBoundryLayer.when();
         })
 
@@ -457,6 +520,7 @@
         })
 
         .then((layerView) => {
+
           view.on("pointer-move", eventHandler);
           view.on("pointer-down", eventHandler);
           function eventHandler(event) {
@@ -467,18 +531,16 @@
             view.hitTest(event, {include: wellyBoundryLayer}).then(getGraphics);
             view.hitTest(event, {include: wellyRegionBoundryLayer}).then(getGraphics2);
             view.hitTest(event, {include: rockstarLayer}).then(getGraphicsPoint);
+            view.hitTest(event, {include: nzCityLayer}).then(getGraphicsPointCity);
           }
 
           function getGraphics(response) {
             if (response.results.length) {
               wellyBoundryLayer.renderer = zoneRendererWGB;
-              
             } else {
               wellyBoundryLayer.renderer = zoneRendererWGBGrey;
-  
             }
           }
-
           function getGraphics2(response) {
             if (response.results.length) 
             {
@@ -489,7 +551,6 @@
               wellyRegionBoundryLayer.renderer = zoneRendererWGBGrey;
             }        
           }
-
           function getGraphicsPoint(response) {
             if (response.results.length) 
             {
@@ -498,6 +559,19 @@
             else 
             {
               rockstarLayer.renderer = rendererGrey;
+            }        
+          }
+          function getGraphicsPointCity(response) {
+            if (response.results.length) 
+            {
+              // To be updated
+              nzCityLayer.renderer = rendererCityGrey;
+              document.body.style.cursor = "pointer";
+            }
+            else 
+            {
+              nzCityLayer.renderer = rendererCityGrey;
+              document.body.style.cursor = "auto";
             }        
           }
         });
@@ -538,9 +612,10 @@
               tilt: 60,
               heading: 0
 
-            }, goToOptions);
-
-
+            }, {
+              speedFactor: 1.5, // animation is 10 times slower than default
+              easing: "out-cubic" // easing function to slow down when reaching the target
+            });
 
             // -------------------------
             // Run click effect
@@ -643,7 +718,7 @@
       <a id="wspLogo" class=" logo" title="WSP">
         <svg aria-labelledby="title" xmlns="http://www.w3.org/2000/svg" class="a-wsp-logo hidden-lg" width="57.372" height="27.285" viewBox="0 0 57.372 27.285"><title id="title" lang="en">WSP</title><defs></defs><path d="M85.453,25.95a11.223,11.223,0,0,0-2.613-7.373h4.3a12.35,12.35,0,0,1,2.283,7.373v.011a12.358,12.358,0,0,1-2.291,7.385h-4.3a11.218,11.218,0,0,0,2.621-7.385Z" transform="translate(-32.048 -18.577)"></path><path d="M3.968,0H0L5.445,14.766H7.554l.929-2.52Z" transform="translate(0 0)"></path><path d="M17.419,0H13.451L18.9,14.766H21l.929-2.52Z" transform="translate(-2.807 0)"></path><path d="M55.761,27.285V0h-3.8V27.285Z" transform="translate(-10.843 0)"></path><path d="M47.912,20.767a6.507,6.507,0,0,1,.512-2.19H51.9a3.188,3.188,0,0,0-.252,2.429,3.638,3.638,0,0,0,1.622,1.924,23.1,23.1,0,0,0,2.871,1.331,11.618,11.618,0,0,1,2.8,1.673A5.551,5.551,0,0,1,61,29.842c.015.192.021.385.021.579a6.516,6.516,0,0,1-.61,2.92H56.846a3.977,3.977,0,0,0,.577-2.16c-.125-1.86-2.4-2.878-4.3-3.723-.29-.134-.575-.255-.847-.383a10.864,10.864,0,0,1-2.37-1.433,5.031,5.031,0,0,1-1.641-2.124,6.146,6.146,0,0,1-.372-2.485C47.9,20.944,47.9,20.855,47.912,20.767Z" transform="translate(-24.756 -18.577)"></path></svg>
       </a>
-      <button class="esri-button" id="buttonRockstar">Rockstar Viewer</button>
+      <button class="esri-button" id="buttonRockstar">Rockstar</button>
       <p>></p>
       <button class="esri-button" id="button1">NZ</button>
       <p>></p>
@@ -660,8 +735,8 @@
   </div>
 
   <div id="circleContainerCenter">
-    <div class="circle" id="c3" style="animation-delay: 2.0s"></div>
-    <div class="circle" id="c4" style="animation-delay: 2.05s"></div>
+    <div class="circle" id="c3" style="animation-delay: 1.5s"></div>
+    <div class="circle" id="c4" style="animation-delay: 1.55s"></div>
   </div>
 
   <div id="info">
@@ -671,16 +746,14 @@
   </div>
   <div id="container">
     <div id="introDiv">
-      <h1>JS Concept</h1>
+      <h1>Rockstar Viewer</h1>
       <div id="show-intro">
-        <p> The ArcGIS Maps SDK for JavaScript is a powerful library that enables developers to build compelling web applications with interactive user experiences and stunning 2D and 3D visualizations. 
-          It provides a wide range of features, including maps, scenes, layers, query, edit, visualization, geocoding, routing, places, demographics, spatial analysis, authentication, utility network, and knowledge graph. 
+        <p> 
+          WSP project locations mapped in NZ along with corresponding employee information.  
           <br><br>
-          This concept uses the ArcGIS Maps SDK for JavaScript as a base for a potential Rockstar Capability Project viewer.
-          <br><br>
-          Based on <a href="https://www.esri.com/arcgis-blog/products/js-api-arcgis/3d-gis/interactive-3d-globe/" target="_blank">this tutorial</a>.
+          This prrof of concept only includes one project in Wellington. Click the Wellington region to begin. 
         </p>
-        <button id="start-globe">Go to globe</button>
+        <button id="start-globe">Loading...</button>
       </div>
       <div id="show-about" class="hidden">
         <button id="close-about" class="esri-icon-close"></button>

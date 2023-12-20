@@ -57,6 +57,38 @@
                 "CITY_NAME": "Christchurch",
                 "CNTRY_NAME": "New Zealand"
             }
+        },
+        {
+            "type": "Feature",
+            "id": 4,
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    153.0260,
+                    -27.4705
+                ]
+            },
+            "properties": {
+                "OBJECTID": 4,
+                "CITY_NAME": "Brisbane",
+                "CNTRY_NAME": "Australia"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": 5,
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    151.2093,
+                    -33.8688
+                ]
+            },
+            "properties": {
+                "OBJECTID": 5,
+                "CITY_NAME": "Sydney",
+                "CNTRY_NAME": "Australia"
+            }
         }
     ]
 }
